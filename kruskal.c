@@ -76,3 +76,14 @@ void Kruskal(struct Grafo* grafo)
 												vetor[i].peso);
 	return;
 }
+
+struct Grafo* criaGrafo(int V, int A)
+{
+	struct Grafo* grafo = (struct Grafo*) malloc( sizeof(struct Grafo) );
+	grafo->V = V;
+	grafo->A = A;
+
+	grafo->aresta = (struct Aresta*) malloc( grafo->A * sizeof( struct Aresta ) );
+
+	return grafo;
+}

@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #ifndef KRUSKAL_H
 #define KRUSKAL_H
 
@@ -13,6 +15,7 @@ struct Grafo
 	struct Aresta* aresta;
 };
 
+/*
 struct Grafo* criaGrafo(int V, int A)
 {
 	struct Grafo* grafo = (struct Grafo*) malloc( sizeof(struct Grafo) );
@@ -22,7 +25,7 @@ struct Grafo* criaGrafo(int V, int A)
 	grafo->aresta = (struct Aresta*) malloc( grafo->A * sizeof( struct Aresta ) );
 
 	return grafo;
-}
+}*/
 
 struct subconjunto
 {
@@ -30,6 +33,7 @@ struct subconjunto
 	int class;
 };
 
+struct Grafo* criaGrafo(int V, int A);
 int find(struct subconjunto subconjuntos[], int i);
 void Union(struct subconjunto subconjuntos[], int x, int y);
 int compara(const void* k, const void* w);
