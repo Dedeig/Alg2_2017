@@ -12,12 +12,14 @@ int find(struct subconjunto subconjuntos[], int i)
 	return subconjuntos[i].pai;
 }
 
-void Union(struct subconjunto subconjuntos[], int x, int y)
+void Union(struct subconjunto subconjuntos[], int x, int y, int maxSubSets)
 {
 	int raiz_x = find(subconjuntos, x);
 	int raiz_y = find(subconjuntos, y);
-
-	if (subconjuntos[raiz_x].class < subconjuntos[raiz_y].class)
+	
+	if((subconjuntos[raiz_x].class == maxSubSets) || (subconjuntos[raiz_y].class == maxSubSets))
+	  return;
+	else if (subconjuntos[raiz_x].class < subconjuntos[raiz_y].class)
 		subconjuntos[raiz_x].pai = raiz_y;
 	else if (subconjuntos[raiz_x].class > subconjuntos[raiz_y].class)
 		subconjuntos[raiz_y].pai = raiz_x;
@@ -37,7 +39,7 @@ int compara(const void* k, const void* w)
 }
 
 
-void Kruskal(struct Grafo* grafo)
+void Kruskal(struct Grafo* grafo, int maxSubSets)
 {
 	int V = grafo->V;
 	struct Aresta vetor[V];
@@ -66,19 +68,17 @@ void Kruskal(struct Grafo* grafo)
 		if (x != y)
 		{
 			vetor[a++] = prox_aresta;
-			Union(subconjuntos, x, y);
+			Union(subconjuntos, x, y, maxSubSets);
 		}
 	}
-
-	//	printf("Following are the arestas in the constructed Kruskal\n");
-	//	for (i = 0; i < a; ++i)
-	  // printf("%d -- %d == %.2f, class: %d\n", vetor[i].origem, vetor[i].destino, vetor[i].peso, subconjuntos[i].class);
 
 	FILE *p = fopen("kruskalResults.txt", "w");
 
 	for (i = 0; i < a; i++)
 	  fprintf(p, "%d\n", subconjuntos[i].class);	  
-	  
+
+	fclose(p);
+
 	return;
 }
 

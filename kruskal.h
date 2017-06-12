@@ -24,8 +24,8 @@ struct subconjunto
 
 struct Grafo* criaGrafo(int V, int A);
 int find(struct subconjunto subconjuntos[], int i);
-void Union(struct subconjunto subconjuntos[], int x, int y);
+void Union(struct subconjunto subconjuntos[], int x, int y, int maxSubSets);
 int compara(const void* k, const void* w);
-void Kruskal(struct Grafo* grafo);
+void Kruskal(struct Grafo* grafo, int maxSubSets);
 
 #endif

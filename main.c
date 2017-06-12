@@ -20,11 +20,14 @@ int main(int argc, char *argv[])
 {
 	float coordX[numPontos], coordY[numPontos]; //vetores de float para guardar os pontos lidos
 	float distanciaPontos[numPontos][numPontos]; //matriz com 
-	int i, j, k;
+	int i, j, k, maxSubSets;
 
 	//fileName = argv[1];
 	FILE *p;
 	p = fopen("data.txt", "r");
+	
+	printf("Digite o numero maximo de classes: \n");
+	scanf("%d", &maxSubSets);
 
 	while(!feof(p)){
 		for(i = 0; i < numPontos; i++){
@@ -68,7 +71,7 @@ int main(int argc, char *argv[])
 	}
 
 	//Executa Kruskal com Union-Find no grafo dado
-    Kruskal(grafo);
+	Kruskal(grafo, maxSubSets);
 
     fclose(p);
 
