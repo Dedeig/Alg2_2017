@@ -54,9 +54,15 @@ int main(int argc, char *argv[])
 	//Não temos uma struct para o vértice (o que importa é a aresta)
 	for(i = 0; i < numPontos; i++){
 		for(j = 0; j < numPontos; j++){
+			if((j<i) || (j==i)){
+				printf("Aresta já existe, não será inserida\n");
+				continue;
+			}
+			
 			grafo->aresta[k].origem = i;
 			grafo->aresta[k].destino = j;
 			grafo->aresta[k].peso = distanciaPontos[i][j];
+			//printf("%d origem: %d, destino: %d, peso: %.2f\n", k, grafo->aresta[k].origem, grafo->aresta[k].destino,grafo->aresta[k].peso);
 			k++;
 		}
 	}

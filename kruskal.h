@@ -5,7 +5,8 @@
 
 struct Aresta
 {
-	int origem, destino, peso;
+	int origem, destino;
+	float peso;
 };
 
 struct Grafo

@@ -72,7 +72,7 @@ void Kruskal(struct Grafo* grafo)
 
 	printf("Following are the arestas in the constructed Kruskal\n");
 	for (i = 0; i < a; ++i)
-		printf("%d -- %d == %d\n", vetor[i].origem, vetor[i].destino,
+		printf("%d -- %d == %.2f\n", vetor[i].origem, vetor[i].destino,
 												vetor[i].peso);
 	return;
 }
