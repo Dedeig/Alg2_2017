@@ -52,7 +52,7 @@ void Kruskal(struct Grafo* grafo)
 	for (int v = 0; v < V; v++)
 	{
 		subconjuntos[v].pai = v;
-		subconjuntos[v].class = 0;
+		subconjuntos[v].class = 1;
 	}
 
 	while (a < V - 1)
@@ -70,10 +70,15 @@ void Kruskal(struct Grafo* grafo)
 		}
 	}
 
-	printf("Following are the arestas in the constructed Kruskal\n");
-	for (i = 0; i < a; ++i)
-		printf("%d -- %d == %.2f\n", vetor[i].origem, vetor[i].destino,
-												vetor[i].peso);
+	//	printf("Following are the arestas in the constructed Kruskal\n");
+	//	for (i = 0; i < a; ++i)
+	  // printf("%d -- %d == %.2f, class: %d\n", vetor[i].origem, vetor[i].destino, vetor[i].peso, subconjuntos[i].class);
+
+	FILE *p = fopen("kruskalResults.txt", "w");
+
+	for (i = 0; i < a; i++)
+	  fprintf(p, "%d\n", subconjuntos[i].class);	  
+	  
 	return;
 }
 

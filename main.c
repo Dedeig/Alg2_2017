@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	for(i = 0; i < numPontos; i++){
 		for(j = 0; j < numPontos; j++){
 			if((j<i) || (j==i)){
-				printf("Aresta já existe, não será inserida\n");
+			  //printf("Aresta já existe, não será inserida\n");
 				continue;
 			}
 			
