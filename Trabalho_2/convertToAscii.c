@@ -39,10 +39,6 @@ typedef struct {
    unsigned int importantcolours;   /* Cores importantes                     */
 } INFOHEADER;
 
-typedef struct {
-   unsigned char r,g,b,junk;
-} COLOURINDEX;
-
 /* Função lê um pedaço de tamanho 'int' (4 bits) no header do arquivo BMP*/
 int ReadUInt(FILE *fptr,unsigned int *n,int swap)
 {
@@ -73,7 +69,7 @@ int ReadUShort(FILE *fptr,short unsigned *n,int swap)
    	cptr = (unsigned char *)n;
    	tmp = cptr[0];
    	cptr[0] = cptr[1];
-   	cptr[1] =tmp;
+   	cptr[1] = tmp;
 	}
    return(TRUE);
 }
@@ -81,17 +77,15 @@ int ReadUShort(FILE *fptr,short unsigned *n,int swap)
 
 int main(int argc,char **argv)
 {
-   int i,j,k, corPixel, intensidadeCor;
-   int gotindex = FALSE;
+   int i,j,m,n, corPixel, intensidadeCor = 0;
    unsigned char grey,r,g,b, cbuf[4];
    HEADER header;
    INFOHEADER infoheader;
-   COLOURINDEX colourindex[256];
    FILE *fptr;
 
    /* Checa o numero de argumentos ao rodar */
    if (argc < 2) {
-      fprintf(stderr,"Usage: %s filename\n",argv[0]);
+      fprintf(stderr,"Uso: %s nome_do_arquivo\n",argv[0]);
       exit(-1);
    }
 
@@ -123,53 +117,23 @@ int main(int argc,char **argv)
    			matrizCor[i][j] = 0;
    		}
    	}
+
    fprintf(stderr,"Tamanho da imagem = %d x %d\n",infoheader.width,infoheader.height);
    fprintf(stderr,"Bits por pixel %d\n",infoheader.bits);
-
-   /* Read the lookup table if there is one */
-   /*for (i=0;i<255;i++) {
-      colourindex[i].r = rand() % 256;
-      colourindex[i].g = rand() % 256;
-      colourindex[i].b = rand() % 256;
-      colourindex[i].junk = rand() % 256;
-   }
-   if (infoheader.ncolours > 0) {
-      for (i=0;i<infoheader.ncolours;i++) {
-         if (fread(&colourindex[i].b,sizeof(unsigned char),1,fptr) != 1) {
-            fprintf(stderr,"Erro ao ler a imagem BMP\n");
-            exit(-1);
-         }
-         if (fread(&colourindex[i].g,sizeof(unsigned char),1,fptr) != 1) {
-            fprintf(stderr,"Erro ao ler a imagem BMP\n");
-            exit(-1);
-         }
-         if (fread(&colourindex[i].r,sizeof(unsigned char),1,fptr) != 1) {
-            fprintf(stderr,"Erro ao ler a imagem BMP\n");
-            exit(-1);
-         }
-         if (fread(&colourindex[i].junk,sizeof(unsigned char),1,fptr) != 1) {
-            fprintf(stderr,"Erro ao ler a imagem BMP\n");
-            exit(-1);
-         }
-         fprintf(stderr,"%3d\t%3d\t%3d\t%3d\n",i,
-            colourindex[i].r,colourindex[i].g,colourindex[i].b);
-      }
-      gotindex = TRUE;
-   }*/
 
    /* Move a leitura do arquivo para o começo dos bits de pixel - SEEK_SET = header.offset */
    fseek(fptr,header.offset,SEEK_SET);
 
    /* Lê a imagem. Faz a leitura de maneira normal, a partir do canto esquerdo superior [0][0]*/
-   for (j = 0;j < infoheader.height; j++) {
-      for (i = 0;i < infoheader.width; i++) {
+   for (i = 0;i < infoheader.height; i++) {
+      for (j = 0;j < infoheader.width; j++) {
 
       //Faz a leitura da imagem, salvando em um buffer. A cor é definida pela media das cores RGB lidas
 		fread(cbuf,1,infoheader.bits/8,fptr);
 		corPixel = ((short)cbuf[2]+(short)cbuf[1]+(short)cbuf[0])/3;
       
       //Salva a media RGB na matriz de cores	
-      matrizCor[j][i] = corPixel;
+      matrizCor[i][j] = corPixel;
     	}
     }
 
@@ -177,8 +141,19 @@ int main(int argc,char **argv)
       A leitura é feita a partir do canto esquerdo INFERIOR de acordo com a 'dica' da especificação. */
    for (i = (infoheader.height-1) ;i >= 0 ; i--) { //começa da ultima linha 
       for (j = 0;j < infoheader.width; j++) { //começa do canto esquerdo
-      	intensidadeCor = (matrizCor[i][j]+matrizCor[i][j+1])/2;
+         //intensidadeCor = (matrizCor[i][j]+matrizCor[i][j+1])/2;
 
+         //Lê um bloco de tamanho MxN da Matriz de Cor e substitui por um caracter. A escolha é feita usando a média da cor de cada pixel do bloco.
+         //Essa leitura funciona bem para matriz 1x2 e vai ficando menos fiel conforme aumenta a matriz.
+         for (m = 0; m < MATRIXM; m++){
+            for (n = 0; n < MATRIXN; n++){
+      	     intensidadeCor += (matrizCor[i+m][j+n]);
+           }
+         }
+         intensidadeCor = intensidadeCor/(MATRIXM*MATRIXN);
+
+         //Fazemos a substituição do bloco lido por um caractere de acordo com a intensidade da cor. Quanto menor, mais escura a cor
+         //logo, usamos um caractere mais preenchido.
  		   if((intensidadeCor >= 1) && (intensidadeCor <= 25))
  			  	printf("#");
  			else if((intensidadeCor >= 26) && (intensidadeCor <= 50))
@@ -199,9 +174,12 @@ int main(int argc,char **argv)
  				printf(".");
  			else if((intensidadeCor >= 226) && (intensidadeCor <= 255))
  				printf(" ");
+
+         intensidadeCor = 0;
         	}
      	printf("\n");
    }
+
    printf("\n");
 
    fclose(fptr);
